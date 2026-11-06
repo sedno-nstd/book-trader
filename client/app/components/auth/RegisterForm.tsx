@@ -57,6 +57,7 @@ export function RegisterForm() {
         linkText: "Log in",
         text: "Already have an account? ",
       }}
+      className="h-full w-full flex justify-center items-center"
     >
       {error && (
         <p className="text-red-600 font-medium text-sm text-center">{error}</p>

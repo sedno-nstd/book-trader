@@ -7,3 +7,30 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+    ADMIN
+    USER
+}
+
+model User {
+   id Int @id @default(autoincrement())
+   email String @unique
+   password String 
+   name String
+   avatar String?
+   role Role @default(USER)
+   books Book[] 
+   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Book {
+    id Int @id @default(autoincrement())
+    title String
+    author String
+    photo  String?
+    ownerId Int
+    owner User @relation(references: [id], fields: [ownerId], onDelete: Cascade)
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+}

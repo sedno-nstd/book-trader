@@ -12,7 +12,9 @@ export const Input: FC<InputProps> = ({
   ...props
 }: InputProps) => {
   return (
-    <div className="flex flex-col gap-2 h-full select-none">
+    <div
+      className={`flex flex-col w-full gap-2 h-full select-none ${className}`}
+    >
       {label && (
         <label className="font-semibold text-lg text-black">{label}</label>
       )}
@@ -20,7 +22,7 @@ export const Input: FC<InputProps> = ({
         type="text"
         className={`border text-gray-700 border-gray-400 w-full rounded-sm p-3 h-full
         focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-500/30
-        hover:border-blue-600 ${className} ${error ? "border-red-500" : ""}`}
+        hover:border-blue-600 ${error ? "border-red-500" : ""}`}
         {...props}
       />
       {error && (

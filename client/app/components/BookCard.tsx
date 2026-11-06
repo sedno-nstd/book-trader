@@ -30,16 +30,10 @@ export function BookCard({ book, onDelete }: BookCardProps) {
           <h3 className="font-bold text-slate-800 text-lg leading-snug line-clamp-1">
             {book.title}
           </h3>
-          <p className="text-slate-500 text-sm font-medium">{book.author}</p>
-        </div>
-
-        <div className="text-xs text-slate-400 pt-2 border-t border-slate-100 flex justify-between items-center">
-          <span>
-            Owner: {""}
-            <strong className="text-slate-600">
-              {book.owner?.name || "Unknown"}
-            </strong>
-          </span>
+          <p className="text-slate-500 text-sm font-medium">
+            <span className="text-slate-800 font-semibold">Author:</span>{" "}
+            {book.author}
+          </p>
         </div>
 
         <div className="flex items-center gap-2 pt-1">

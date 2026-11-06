@@ -9,4 +9,5 @@ export interface Book {
     name: string;
     email: string;
   };
+  createdAt?: Date;
 }

@@ -33,6 +33,7 @@ router.get("/", async (req: Request, res: Response) => {
 
     const [books, total] = await Promise.all([
       prisma.book.findMany({
+        where: whereClause,
         skip,
         orderBy: {
           title: sort === "desc" ? "desc" : "asc",
@@ -139,6 +140,66 @@ router.delete(
     } catch (err) {
       console.error(err);
       return res.status(500).json({ error: "Failed to delete book" });
+    }
+  },
+);
+
+router.post(
+  "/:id/trade",
+  authenticateToken,
+  async (req: AuthRequest, res: Response) => {
+    try {
+      const bookId = Number(req.params.id);
+      const senderId = req.user!.userId || (req.user as any).id;
+
+      const book = await prisma.book.findUnique({
+        where: { id: bookId },
+        include: { owner: true },
+      });
+
+      if (!book) {
+        return res.status(404).json({ error: "Book not found" });
+      }
+
+      if (book.ownerId === senderId) {
+        return res
+          .status(400)
+          .json({ error: "You cannot request a trade for your own book" });
+      }
+
+      const sender = await prisma.user.findUnique({ where: { id: senderId } });
+      const senderBooks = await prisma.book.findMany({
+        where: { ownerId: senderId },
+      });
+
+      const booksListText =
+        senderBooks.length > 0
+          ? senderBooks
+              .map((b, i) => `${i + 1}. "${b.title}" (${b.author})`)
+              .join("\n")
+          : "Sender haven't added books";
+
+      console.log(`
+      === 📧 TRADE REQUEST EMAIL SENT ===
+      To: ${book.owner.name} <${book.owner.email}>
+      From: ${sender?.name} <${sender?.email}>
+      Subject: Request to trade book "${book.title}"
+
+      Message:
+      Hello ${book.owner.name}!
+      User ${sender?.name} (${sender?.email}) wants to trade for your book "${book.title}".
+
+      Here is the list of books available for trade:
+      ${booksListText}
+    `);
+
+      return res.status(200).json({
+        message: "Trade request sent successfully!",
+        ownerEmail: book.owner.email,
+      });
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ error: "Failed to process trade request" });
     }
   },
 );
